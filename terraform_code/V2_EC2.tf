@@ -10,7 +10,7 @@ resource "aws_instance" "demo-server" {
   instance_type   = "t2.micro"
   key_name        = "mine"
   subnet_id       = "subnet-066148bf06403b80b"
-  security_groups = [aws_security_group.demo-sg.id]
+  vpc_security_group_ids = [aws_security_group.demo-sg.id]
   tags = {
     Name = "demo-server"
   }
