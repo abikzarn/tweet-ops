@@ -5,17 +5,29 @@ provider "aws" {
 }
 
 # Create EC2 instance
-resource "aws_instance" "demo-server" {
+resource "aws_instance" "jenkins-master" {
+  ami                    = "ami-005fc0f236362e99f"
+  instance_type          = "t3.medium"
+  key_name               = "mine"
+  subnet_id              = aws_subnet.dpw-public_subnet_01.id
+  vpc_security_group_ids = [aws_security_group.demo-sg.id]
+  tags = {
+    Name = "jenkins-master"
+  }
+}
+
+resource "aws_instance" "ansible-build-slave" {
   ami                    = "ami-005fc0f236362e99f"
   instance_type          = "t2.micro"
   key_name               = "mine"
   subnet_id              = aws_subnet.dpw-public_subnet_01.id
   vpc_security_group_ids = [aws_security_group.demo-sg.id]
-  for_each = toset(["jenkins-master", "build-slave", "ansible"])
-   tags = {
-     Name = "${each.key}"
-   }
+  for_each               = toset(["build-slave", "ansible"])
+  tags = {
+    Name = "${each.key}"
+  }
 }
+
 
 # Create security group
 resource "aws_security_group" "demo-sg" {
@@ -29,6 +41,13 @@ resource "aws_security_group" "demo-sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "jenkins port"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["88.166.154.24/32"]
   }
 
   egress {
