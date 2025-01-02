@@ -34,7 +34,7 @@ environment {
             steps {
                 echo '--------- SonarQube Analysis Started----------'
                 withSonarQubeEnv('abikzarn-sonarqube-server') { 
-                sh 'mvn sonar:sonar'
+                sh 'mvn sonar:sonar -Dsonar.projectProperties=sonar-project.properties'
                 echo '--------- SonarQube Analysis Finished----------'
             }
         }
