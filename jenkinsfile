@@ -8,6 +8,8 @@ pipeline {
 
 environment {
         PATH = "/opt/apache-maven-3.9.9/bin:$PATH"
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+
     }
 
     stages {
@@ -38,6 +40,23 @@ environment {
                 echo '--------- SonarQube Analysis Finished----------'
             }
         }
-   }     
+   }
+
+        stage('Docker Build') {
+            steps {
+                echo '--------- Docker Build Started ----------'
+                sh 'docker build -t abikzarn/tweet-ops:$BUILD_NUMBER .'
+                echo '--------- Docker Build Finished ----------'
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                echo '--------- Docker Push Started ----------'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'docker push abikzarn/tweet-ops:$BUILD_NUMBER'
+                echo '--------- Docker Push Finished ----------'
+            }
+        }
   }
 }  
