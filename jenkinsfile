@@ -13,18 +13,30 @@ environment {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean deploy'
+                echo '--------- Build Started ----------'
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                echo '--------- Build Finished ----------'
             }               
         }
-    
+
+        stage('Test') {
+            steps {
+                echo '--------- Unit Test Started ----------'
+                sh 'mvn surefire-report:report'
+                echo '--------- Unit Test Finished ----------'
+            }
+        }
+
         stage('SonarQube analysis') {
         environment {
             scannerHome = tool 'abikzarn-sonar-scanner'
         }
-        steps {
-        withSonarQubeEnv('abikzarn-sonarqube-server') { 
-        sh "${scannerHome}/bin/sonar-scanner"
-      }
+            steps {
+                echo '--------- SonarQube Analysis Started----------'
+                withSonarQubeEnv('abikzarn-sonarqube-server') { 
+                sh "${scannerHome}/bin/sonar-scanner"
+                echo '--------- SonarQube Analysis Finished----------'
+            }
         }
    }     
   }
