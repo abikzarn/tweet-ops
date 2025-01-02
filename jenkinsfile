@@ -34,7 +34,7 @@ environment {
             steps {
                 echo '--------- SonarQube Analysis Started----------'
                 withSonarQubeEnv('abikzarn-sonarqube-server') { 
-                sh "${scannerHome}/bin/sonar-scanner"
+                sh 'mvn sonar:sonar'
                 echo '--------- SonarQube Analysis Finished----------'
             }
         }
