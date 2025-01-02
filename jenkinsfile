@@ -16,5 +16,16 @@ environment {
                 sh 'mvn clean deploy'
             }               
         }
-    }
-}
+    
+        stage('SonarQube analysis') {
+        environment {
+            scannerHome = tool 'abikzarn-sonar-scanner'
+        }
+        steps {
+        withSonarQubeEnv('abikzarn-sonarqube-server') { 
+        sh "${scannerHome}/bin/sonar-scanner"
+      }
+        }
+   }     
+  }
+}  
