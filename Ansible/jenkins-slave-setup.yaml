@@ -32,4 +32,9 @@
     service: 
       name: docker
       state: started
+      enabled: true
 
+  - name: give 777 permission on /var/run/docker.sock 
+    shell: 
+      cmd: "chmod 777 /var/run/docker.sock"
+    
