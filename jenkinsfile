@@ -37,6 +37,7 @@ environment {
                 echo '--------- SonarQube Analysis Started----------'
                 withSonarQubeEnv('abikzarn-sonarqube-server') { 
                 sh 'mvn sonar:sonar -Dsonar.projectProperties=sonar-project.properties'
+                }
                 echo '--------- SonarQube Analysis Finished----------'
             }
         }
@@ -56,6 +57,14 @@ environment {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 sh 'docker push abikzarn/tweet-ops:$BUILD_NUMBER'
                 echo '--------- Docker Push Finished ----------'
+            }
+        }
+
+        stage('kubernetes deploy') {
+            steps {
+                echo '--------- Kubernetes Deploy Started ----------'
+                sh './kubernetes/deploy.sh'
+                echo '--------- Kubernetes Deploy Finished ----------'
             }
         }
   }
