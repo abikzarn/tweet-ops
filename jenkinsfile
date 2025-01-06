@@ -9,8 +9,7 @@ pipeline {
 environment {
         PATH = "/opt/apache-maven-3.9.9/bin:$PATH"
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-
-    }
+     }
 
     stages {
         stage('Build') {
@@ -36,13 +35,12 @@ environment {
             steps {
                 echo '--------- SonarQube Analysis Started----------'
                 withSonarQubeEnv('abikzarn-sonarqube-server') { 
-                sh 'mvn sonar:sonar -Dsonar.projectProperties=sonar-project.properties'
+                    sh 'mvn sonar:sonar -Dsonar.projectProperties=sonar-project.properties'
                 }
                 echo '--------- SonarQube Analysis Finished----------'
             }
         }
-   }
-
+    
         stage('Docker Build') {
             steps {
                 echo '--------- Docker Build Started ----------'
@@ -60,12 +58,16 @@ environment {
             }
         }
 
-        stage('kubernetes deploy') {
+        stage('Kubernetes Deploy') {
             steps {
                 echo '--------- Kubernetes Deploy Started ----------'
-                sh './kubernetes/deploy.sh'
+                sh '''
+                    cd kubernetes/
+                    chmod +x deploy.sh
+                    ./deploy.sh
+                '''
                 echo '--------- Kubernetes Deploy Finished ----------'
             }
         }
-  }
-}  
+    }
+}
